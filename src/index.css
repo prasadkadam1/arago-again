@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#homePage{
+  height: 100vh;
+  background-image: linear-gradient(to right , rgb(0,42,80), rgb(1,32,62),rgb(0,4,19), rgb(1,32,62));
+}
+#loader {
+  animation: loader 4s infinite linear;
+}
+
+@keyframes loader {
+  to {
+    transform: rotate(360deg) scale(2);
+  }
+}
+#aragosText {
+  animation: aragosText 4s infinite linear;
+}
+
+@keyframes aragosText {
+  to {
+    transform: rotate(-360deg) scale(2);
+  }
+}
+
+body::-webkit-scrollbar{
+  display: none;
+}
