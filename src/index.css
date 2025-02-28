@@ -28,3 +28,14 @@
 body::-webkit-scrollbar{
   display: none;
 }
+.sim-card {
+  width: 200px;
+  height: 200px;
+  background-color: rgba(20,20,20,0.8 ); /* Example color */
+  clip-path: polygon(0% 0%, 90% 0%, 100% 10%, 100% 100%, 0% 100%);
+  border: 1px solid #888;
+}
+/* .sim-card+span{
+  display: inline-block;
+
+} */

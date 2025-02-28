@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { FaStarOfLife } from "react-icons/fa6";
+import { TbWorld } from "react-icons/tb";
 // import { useRef } from "react";
 import * as THREE from "three";
 // import Chipset from "./components/Chipset";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Chipset from "./Chipset";
-
+import { FaArrowsToEye } from "react-icons/fa6";
 const Home = () => {
   gsap.registerPlugin(ScrollTrigger);
   const containerRef = useRef(null);
@@ -17,6 +19,7 @@ const Home = () => {
   const scrollToDiscroverRef2 = useRef(null);
   const scrollToDiscroverRef3 = useRef(null);
   const threeElementRef = useRef(null);
+  let [elementRotation, setElementRotation] = useState()
   const [scrolled, setScrolled] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [scrollPositionReverse, setScrollPositionReverse] = useState(0);
@@ -108,9 +111,9 @@ const Home = () => {
         ease: "power2.out",
       });
     }
-    if (scrollPosition < 3000  && scrollPosition > 6000) {
+    if (scrollPosition < 3000 || scrollPosition > 6000) {
       gsap.to(threeElementRef.current, {
-        transform: `translateX(-${scrollPosition * 0.1}px)`,
+        transform: `translateX(-${scrollPosition * 0.2}px)`,
         duration: 0.5,
         ease: "none",
       });
@@ -124,19 +127,6 @@ const Home = () => {
     }
   }, [scrolled, scrollPosition]);
 
-  //   useEffect(() => {
-  //     let windoScroll = window.addEventListener("scroll", (e) => {
-  //       setWindoScrollstate(window.scrollY);
-  //     });
-  //     console.log(windoScrollstate);
-  //   }, [windoScrollstate]);
-//   echo "# arago-again" >> README.md
-//   git init
-//   git add README.md
-//   git commit -m "first commit"
-//   git branch -M main
-//   git remote add origin https://github.com/prasadkadam1/arago-again.git
-//   git push -u origin main
   return (
     <div
       className="h-screen w-screen text-white overflow-auto"
@@ -147,18 +137,7 @@ const Home = () => {
         ref={navRef}
         className="p-10 flex justify-between sticky top-0 z-10 bg-transparent"
       >
-        <div
-          ref={threeElementRef}
-          className="fixed w-[500px] h-[500px] top-[0px] right-[200px]"
-        >
-          <Canvas shadows>
-            <PerspectiveCamera makeDefault position={[-5, 3, 3]} fov={50} />
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[5, 5, 5]} intensity={1} />
-            <Chipset scale={10} />
-            <OrbitControls enableZoom={false} />
-          </Canvas>
-        </div>
+
 
         <div className="w-[35%] flex justify-between" data-aos="fade-up">
           <h3 className="border-r-2 pr-5">Arago</h3>
@@ -171,6 +150,19 @@ const Home = () => {
           <p>--</p>
         </div>
       </nav>
+      <div
+        // style={{ zIndex: '-100' }}
+        ref={threeElementRef}
+        className="fixed w-[500px]  h-[500px] top-[0px] right-[0px]"
+      >
+        <Canvas shadows>
+          <PerspectiveCamera makeDefault position={[-5, 5, 1]} fov={50} />
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[5, 1, 5]} intensity={1} />
+          <Chipset scale={10} />
+          <OrbitControls enableZoom={false} />
+        </Canvas>
+      </div>
       {/* <ThreeCube /> */}
       <h1
         ref={slowedRef}
@@ -303,14 +295,62 @@ const Home = () => {
         <article className="h-[100vh]">
           <h1 className="text-4xl">Welcome to the new era</h1>
         </article>
-        <article>
-          <section>
+        <article className="flex">
+          <section className="flex flex-col w-[60vw]">
+            {/* <div className="w-[15vw] bg-[ rgba(100, 100, 100, 0.7 ) ] h-[15vw] border-[1px] border-gray-300"></div>
             <div className="w-[15vw] bg-[ rgba(100, 100, 100, 0.7 ) ] h-[15vw] border-[1px] border-gray-300"></div>
-            <div className="w-[15vw] bg-[ rgba(100, 100, 100, 0.7 ) ] h-[15vw] border-[1px] border-gray-300"></div>
-            <div className="w-[15vw] bg-[ rgba(100, 100, 100, 0.7 ) ] h-[15vw] border-[1px] border-gray-300"></div>
+            <div className="w-[15vw] bg-[ rgba(100, 100, 100, 0.7 ) ] h-[15vw] border-[1px] border-gray-300"></div> */}
+            <article className="flex relative left-32  ">
+              <div className="sim-card p-[20px]">
+                <FaArrowsToEye className="text-[40px]" />
+                <p className="uppercase text-slate-500 pt-3">Baby steps, giant strides</p>
+                <p>We take one step at a time, with velocity.</p>
+              </div><span className="inline-block w-[25px] border-t-[1px] border-t-[#888] rotate-[45deg] relative right-[93px] bottom-5"></span>
+            </article>
+            <article className="flex mt-4 ml-8">
+              <div className="sim-card p-[20px]">
+                <FaStarOfLife className="text-[40px]" />
+                <p className="uppercase text-slate-500 pt-3">Do great things</p>
+                <p>Think bold, give it all, make it real.</p>
+              </div><span className="inline-block w-[25px] border-t-[1px] border-t-[#888] rotate-[45deg] relative right-[93px] bottom-5"></span>
+            </article>
+            <article className="flex relative bottom-[230px] left-[280px]">
+              <div className="sim-card p-[20px]">
+                <TbWorld className="text-[40px] text-slate-300" />
+                <p className="uppercase text-slate-500 pt-3">We move as one</p>
+                <p>Trust and peer admiration drive our mission.</p>
+              </div><span className="inline-block w-[25px] border-t-[1px] border-t-[#888] rotate-[45deg] relative right-[93px] bottom-5"></span>
+            </article>
           </section>
-          <section></section>
+          <section>
+            <div className="w-[50vw] ps-48 h-[100vh] ">
+              <p className="pt-3 text-gray-400">TEAM</p>
+              <h1 className="text-2xl pt-10 text-gray-500">
+                If you're excited about <span className="text-gray-300 font-normal"> shaping the <br /> future </span>  of computing and AI, we'd love <br /> to hear from you
+              </h1>
+              <p className="pt-14 text-gray-400">
+                The power of computing has enabled humanity to explore new <br /> planets, discover treatments for the rarest diseases, and <br /> produce the most beautiful films ever seen. <br />
+
+                We don’t want discoveries and creativity to be slowed by a lack <br /> of appropriate infrastructure.
+              </p>
+            </div>
+
+          </section>
         </article>
+        <section>
+
+          <div className="w-[50vw] ps-48 h-[100vh] ">
+            <p className="pt-3 text-gray-400">TEAM</p>
+            <h1 className="text-2xl pt-10 text-gray-500">
+              If you're excited about <span className="text-gray-300 font-normal"> shaping the <br /> future </span>  of computing and AI, we'd love <br /> to hear from you
+            </h1>
+            <p className="pt-14 text-gray-400">
+              The power of computing has enabled humanity to explore new <br /> planets, discover treatments for the rarest diseases, and <br /> produce the most beautiful films ever seen. <br />
+
+              We don’t want discoveries and creativity to be slowed by a lack <br /> of appropriate infrastructure.
+            </p>
+          </div>
+        </section>
       </main>
     </div>
   );
