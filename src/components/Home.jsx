@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { FaStarOfLife } from "react-icons/fa6";
 import { TbWorld } from "react-icons/tb";
@@ -11,6 +11,28 @@ import * as THREE from "three";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Chipset from "./Chipset";
 import { FaArrowsToEye } from "react-icons/fa6";
+
+const FloatingChipset = () => {
+  const chipsetRef = useRef();
+  const [time, setTime] = useState(0);
+
+  useFrame((state, delta) => {
+    setTime((prev) => prev + delta);
+    if (chipsetRef.current) {
+      // Gentle floating motion with increased speed (0.5 -> 1.0)
+      chipsetRef.current.position.y = Math.sin(time * 1.0) * 0.2;
+      // Subtle rotation with increased speed (0.3 -> 0.6)
+      chipsetRef.current.rotation.y = Math.sin(time * 0.6) * 0.1;
+    }
+  });
+
+  return (
+    <group ref={chipsetRef}>
+      <Chipset scale={1} />
+    </group>
+  );
+};
+
 const Home = () => {
   gsap.registerPlugin(ScrollTrigger);
   const containerRef = useRef(null);
@@ -20,14 +42,19 @@ const Home = () => {
   const scrollToDiscroverRef2 = useRef(null);
   const scrollToDiscroverRef3 = useRef(null);
   const threeElementRef = useRef(null);
+  const specificityRef = useRef(null);
+  const rotatingLineRef1 = useRef(null);
+  const rotatingLineRef2 = useRef(null);
+  let [degree, setDegree] = useState(70);
   let [elementRotation, setElementRotation] = useState();
   const [scrolled, setScrolled] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [scrollPositionReverse, setScrollPositionReverse] = useState(0);
   let [windoScrollstate, setWindoScrollstate] = useState(7);
-  let [windoScrollstateRotation, setWindoScrollstateRotation] = useState(1);
+  let [windoScrollstateRotation, setWindoScrollstateRotation] = useState(4);
   const [prevScrollPosition, setPrevScrollPosition] = useState(0);
-  const [prevScrollPositionRotation, setPrevScrollPositionRotation] = useState(0);
+  const [prevScrollPositionRotation, setPrevScrollPositionRotation] =
+    useState(0);
 
   useEffect(() => {
     const container = document.getElementById("homePage");
@@ -99,7 +126,7 @@ const Home = () => {
     //=====================
   }, []);
   useEffect(() => {
-    console.log(scrollPosition);
+    // console.log(scrollPosition);
 
     if (scrolled && scrollToDiscroverRef3.current) {
       gsap.to(scrollToDiscroverRef3.current, {
@@ -116,7 +143,9 @@ const Home = () => {
         ease: "power2.out",
       });
     }
-    if (scrollPosition < 5000 || scrollPosition > 10000) {
+
+    if (scrollPosition < 3000 ) {
+      console.log(scrollPosition);
       setWindoScrollstate((prevState) => {
         if (scrollPosition > prevScrollPosition) {
           return prevState + 0.1;
@@ -126,22 +155,63 @@ const Home = () => {
       });
       setWindoScrollstateRotation((prevState) => {
         if (scrollPosition > prevScrollPositionRotation) {
-          return prevState - 0.03;
+          return prevState - 0.05;
         } else {
-          return prevState + 0.03;
+          return prevState + 0.05;
         }
       });
       gsap.to(threeElementRef.current, {
-        transform: `translateX(-${scrollPosition * 0.2}px)`,
+        transform: `translateX(-${scrollPosition * 0.07}px)`,
         duration: 0.5,
         ease: "none",
       });
-    } else {
-      const reversePosition = (scrollPosition - 10000) * 0.1;
-      gsap.to(threeElementRef.current, {
-        transform: `translateX(-${300 - reversePosition}px)`,
-        duration: 0.5,
+    } 
+    // else  {
+    //   const reversePosition = (scrollPosition - 10000) * 0.05;
+    //   gsap.to(threeElementRef.current, {
+    //     transform: `translateX(-${300 - reversePosition}px)`,
+    //     duration: 0.5,
+    //     ease: "none",
+    //   });
+    // }
+    if (
+      specificityRef.current &&
+      scrollPosition > 1000 &&
+      scrollPosition < 1900
+    ) {
+      const scrollRange = 1900 - 1000;
+      const scrollProgress = (scrollPosition - 1000) / scrollRange;
+      const newDegree = -30 + scrollProgress * 90;
+      setDegree(newDegree);
+      console.log(degree);
+      gsap.to(rotatingLineRef1.current, {
+        rotate: `${newDegree}deg`,
+        duration: 0.01,
         ease: "none",
+      });
+      gsap.to(rotatingLineRef2.current, {
+        rotate: `${-newDegree}deg`,
+        duration: 0.01,
+        ease: "none",
+      });
+    }
+    // console.log(scrollPosition);
+
+    if (
+      specificityRef.current &&
+      scrollPosition > 700 &&
+      scrollPosition < 1900
+    ) {
+      gsap.to(specificityRef.current, {
+        opacity: 1,
+        duration: 1,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(specificityRef.current, {
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out",
       });
     }
   }, [scrolled, scrollPosition]);
@@ -156,11 +226,9 @@ const Home = () => {
         ref={navRef}
         className="p-10 flex justify-between sticky top-0 z-10 bg-transparent"
       >
-        <div className="w-[35%] flex justify-between" data-aos="fade-up">
-          <h3 className="border-r-2 pr-5">Arago</h3>
-          <p className="text-sm">
-            AI-system powered by light AI-system powered by light
-          </p>
+        <div className="w-[15%] flex justify-between" data-aos="fade-up">
+          <h3 className="border-r-2 pr-5">arago</h3>
+          <p className="text-sm uppercase">AI-system powered by light</p>
         </div>
         <div className="flex" data-aos="fade-up">
           <p>CONTACT SALES</p>
@@ -170,7 +238,7 @@ const Home = () => {
       <div
         // style={{ zIndex: '-100' }}
         ref={threeElementRef}
-        className="fixed w-[70vw]  h-[1000px] top-[0px] right-[0px]"
+        className="fixed w-[70vw]  h-[1000px] top-[0px] right-[50px]"
       >
         <Canvas shadows>
           <PerspectiveCamera
@@ -179,9 +247,9 @@ const Home = () => {
             fov={50}
           />
           <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 1, 5]} intensity={1} />
-          <Chipset scale={10} />
-          <OrbitControls 
+          <directionalLight position={[10, 5, 10]} intensity={1} />
+          <FloatingChipset />
+          <OrbitControls
             enableZoom={false}
             enableRotate={false}
             enablePan={false}
@@ -223,6 +291,38 @@ const Home = () => {
             multi-physics processor, maximizing Flops/$ and Flops/Watt.
           </p>
         </div>
+        <section className="flex gap-10" ref={specificityRef}>
+          <article className="w-[25%] relative bottom-[100px] left-[100px] border-b-[1px] border-r-gray-500">
+            <h1 className=" text-lg">
+              The digital processor controls and performs the final 1% of
+              operations
+            </h1>
+            <p className="text-gray-400 pt-2  pb-10  text-sm">
+              {" "}
+              Its deterministic architecture maximizes memory transfer
+              efficiency and speeds up pointwise operations, achieving optimal
+              performance for tasks with 𝑛^2 complexity.
+            </p>
+          </article>
+          <div
+            ref={rotatingLineRef1}
+            className={`h-[1px] relative top-[9.2vh] origin-left left-[3.1vw] w-[30vw]  bg-gray-100`}
+          ></div>
+          <div
+            ref={rotatingLineRef2}
+            className={`h-[1px] relative bottom-[34.7vh] origin-right right-[3.1vw] w-[30vw]  bg-gray-100`}
+          ></div>
+          <article className="w-[25%] relative bottom-[500px] right-[100px] border-b-[1px]  border-r-gray-500">
+            <h1 className=" text-lg">
+              Arago's system accelerate 99% of operations: matrix
+              multiplications
+            </h1>
+            <p className="text-gray-400 pt-2 text-sm">
+              Harness the unmatched parallelism of light to accelerate
+              high-volume tasks with 𝑛^3 complexity.
+            </p>
+          </article>
+        </section>
         <div className="w-[50%] h-[100vh]  border-t-[1px] border-t-white mt-20">
           <p className="pt-3 text-gray-400">Specificity </p>
           <h1 className="pt-14 text-gray-400 text-2xl">
@@ -373,8 +473,8 @@ const Home = () => {
             </div>
           </section>
         </article>
-        <section>
-          <div className="w-[50vw] ps-48 h-[100vh] ">
+        <section className="flex border-b-[1px] border-b-gray-500 ">
+          <div className="w-[50vw] ps-48 h-[70vh] ">
             <p className="text-gray-400">Career</p>
             <h1 className="text-2xl pt-10 text-gray-500">
               We are a team of AI engineers and <br /> physicists who believe in{" "}
@@ -401,8 +501,112 @@ const Home = () => {
             </article>
             <span className="inline-block w-[6px] border-t-[1px] border-t-[#888] rotate-[45deg] relative left-[45px] bottom-[65px]"></span>
           </div>
+          <article>
+            <table className="text-start">
+              <tr className="border-b-[1px] border-b-gray-500">
+                <td className="p-5 w-[20vw] h-[10vh]">POSITION</td>
+                <td className="p-5 w-[20vw] h-[10vh]">LOCATION</td>
+                <td className="p-5 w-[20vw] h-[10vh]"></td>
+              </tr>
+              <tr className="border-b-[1px] border-b-gray-500">
+                <th className="p-5 w-[20vw] text-start h-[10vh]">
+                  Senior Processor Architect
+                </th>
+                <td className="p-5 w-[20vw] h-[10vh]">Paris, San Francisco</td>
+                <th className="p-5 w-[20vw] h-[10vh]">
+                  <div className="flex items-center gap-5">
+                    <FaArrowUpLong className="rotate-[45deg] text-sm  text-gray-500" />
+                    Apply now
+                  </div>
+                </th>
+              </tr>
+              <tr className="border-b-[1px] border-b-gray-500">
+                <th className="p-5 w-[20vw] text-start h-[10vh]">
+                  Senior Analog and Mixed Signal Engineer
+                </th>
+                <td className="p-5 w-[20vw] h-[10vh]">Paris, Tel Aviv</td>
+                <th className="p-5 w-[20vw] h-[10vh]">
+                  <div className="flex items-center gap-5">
+                    <FaArrowUpLong className="rotate-[45deg] text-sm  text-gray-500" />
+                    Apply now
+                  </div>
+                </th>
+              </tr>
+              <tr className="border-b-[1px] border-b-gray-500">
+                <th className="p-5 w-[20vw] text-start h-[10vh]">
+                  Low-Level Software Engineer
+                </th>
+                <td className="p-5 w-[20vw] h-[10vh]">Paris, San Francisco</td>
+                <th className="p-5 w-[20vw] h-[10vh]">
+                  <div className="flex items-center gap-5">
+                    <FaArrowUpLong className="rotate-[45deg] text-sm  text-gray-500" />
+                    Apply now
+                  </div>
+                </th>
+              </tr>
+            </table>
+          </article>
         </section>
+        <p className="uppercase text-gray-400 pt-5">
+          Backed by executives and founders from...
+        </p>
+        <div className="w-[90vw] overflow-hidden">
+          <div className="flex animate-infinite-scroll">
+            {[...Array(10)].map((_, index) => (
+              <article key={index} className="flex mt-4">
+                <div className="sim-card-clients p-[20px]">
+                  <FaStarOfLife className="text-[40px]" />
+                </div>
+                <span className="inline-block w-[35px] border-t-[1px] border-t-[#888] rotate-[33deg] relative right-[79px] bottom-[5px]"></span>
+              </article>
+            ))}
+          </div>
+        </div>
       </main>
+      <footer className="h-[80vh] flex flex-col border-b-[1px] border-b-gray-300 border-t-gray-500  gap-4 items-center">
+        <h1 className="text-9xl text-center  pt-10 text-gray-100">
+          Get <br />
+          in touch
+        </h1>
+        <p>Arago reinvents computing - with light.</p>
+        <section className="flex gap-4">
+          <article className="flex mt-4">
+            <div className="sim-card-small p-[20px] bg-slate-50 ">Email</div>
+            <span className="inline-block w-[15px] border-t-[1px] border-t-[#888] rotate-[33deg] relative right-[29px] bottom-[1px]"></span>
+          </article>
+          <article className="flex mt-4">
+            <div className="sim-card-small p-[20px]">LinkedIn</div>
+            <span className="inline-block w-[15px] border-t-[1px] border-t-[#888] rotate-[33deg] relative right-[29px] bottom-[1px]"></span>
+          </article>
+        </section>
+      </footer>
+      <footer className="h-[10vh] flex justify-between px-10 uppercase text-2xl items-center">
+        <p>© 2025 Arago.</p>
+        <p>Terms Of Use.</p>
+      </footer>
+      <style jsx>{`
+        @keyframes infinite-scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(
+              calc(-100px * 5)
+            ); /* Adjust based on item width */
+          }
+        }
+
+        .animate-infinite-scroll {
+          animation: infinite-scroll 15s linear infinite;
+          display: flex;
+          gap: 1rem;
+        }
+
+        /* When animation reaches halfway, jump back to start */
+        .animate-infinite-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </div>
   );
 };
